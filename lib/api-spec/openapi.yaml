@@ -3,13 +3,17 @@ info:
   # Do not change the title, if the title changes, the import paths will be broken
   title: Api
   version: 0.1.0
-  description: API specification
+  description: Encryption & Decryption with AI Assistant API
 servers:
   - url: /api
     description: Base API path
 tags:
   - name: health
     description: Health operations
+  - name: openai
+    description: OpenAI AI chat, image, and audio operations
+  - name: encryption
+    description: Encryption and decryption operations
 paths:
   /healthz:
     get:
@@ -24,6 +28,201 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/HealthStatus"
+  /openai/conversations:
+    get:
+      operationId: listOpenaiConversations
+      tags: [openai]
+      summary: List all conversations
+      responses:
+        "200":
+          description: List of conversations
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/OpenaiConversation"
+    post:
+      operationId: createOpenaiConversation
+      tags: [openai]
+      summary: Create a new conversation
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateOpenaiConversationBody"
+      responses:
+        "201":
+          description: Created conversation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/OpenaiConversation"
+  /openai/conversations/{id}:
+    get:
+      operationId: getOpenaiConversation
+      tags: [openai]
+      summary: Get conversation with messages
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Conversation with messages
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/OpenaiConversationWithMessages"
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/OpenaiError"
+    delete:
+      operationId: deleteOpenaiConversation
+      tags: [openai]
+      summary: Delete a conversation
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Deleted
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/OpenaiError"
+  /openai/conversations/{id}/messages:
+    get:
+      operationId: listOpenaiMessages
+      tags: [openai]
+      summary: List messages in a conversation
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: List of messages
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/OpenaiMessage"
+    post:
+      operationId: sendOpenaiMessage
+      tags: [openai]
+      summary: Send a text message and receive a streaming text response
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SendOpenaiMessageBody"
+      responses:
+        "200":
+          description: SSE stream of assistant text chunks
+          content:
+            text/event-stream: {}
+  /encryption/encrypt:
+    post:
+      operationId: encryptText
+      tags: [encryption]
+      summary: Encrypt text with specified algorithm
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/EncryptRequest"
+      responses:
+        "200":
+          description: Encrypted result
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/EncryptResponse"
+  /encryption/decrypt:
+    post:
+      operationId: decryptText
+      tags: [encryption]
+      summary: Decrypt text with specified algorithm
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/DecryptRequest"
+      responses:
+        "200":
+          description: Decrypted result
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DecryptResponse"
+  /encryption/generate-key:
+    post:
+      operationId: generateKey
+      tags: [encryption]
+      summary: Generate encryption key for algorithm
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/GenerateKeyRequest"
+      responses:
+        "200":
+          description: Generated key
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GenerateKeyResponse"
+  /encryption/history:
+    get:
+      operationId: getEncryptionHistory
+      tags: [encryption]
+      summary: Get encryption/decryption history
+      responses:
+        "200":
+          description: History entries
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/EncryptionHistoryEntry"
+  /encryption/stats:
+    get:
+      operationId: getEncryptionStats
+      tags: [encryption]
+      summary: Get encryption usage stats
+      responses:
+        "200":
+          description: Stats
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/EncryptionStats"
 components:
   schemas:
     HealthStatus:
@@ -33,4 +232,201 @@ components:
           type: string
       required:
         - status
-
+    OpenaiConversation:
+      type: object
+      properties:
+        id:
+          type: integer
+        title:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+      required:
+        - id
+        - title
+        - createdAt
+    OpenaiMessage:
+      type: object
+      properties:
+        id:
+          type: integer
+        conversationId:
+          type: integer
+        role:
+          type: string
+        content:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+      required:
+        - id
+        - conversationId
+        - role
+        - content
+        - createdAt
+    CreateOpenaiConversationBody:
+      type: object
+      properties:
+        title:
+          type: string
+      required:
+        - title
+    SendOpenaiMessageBody:
+      type: object
+      properties:
+        content:
+          type: string
+      required:
+        - content
+    OpenaiConversationWithMessages:
+      type: object
+      properties:
+        id:
+          type: integer
+        title:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+        messages:
+          type: array
+          items:
+            $ref: "#/components/schemas/OpenaiMessage"
+      required:
+        - id
+        - title
+        - createdAt
+        - messages
+    OpenaiError:
+      type: object
+      properties:
+        error:
+          type: string
+      required:
+        - error
+    EncryptRequest:
+      type: object
+      properties:
+        text:
+          type: string
+        algorithm:
+          type: string
+          enum: [AES, Caesar, Base64, ROT13, Vigenere, XOR]
+        key:
+          type: string
+        shift:
+          type: ["integer", "null"]
+      required:
+        - text
+        - algorithm
+    EncryptResponse:
+      type: object
+      properties:
+        encrypted:
+          type: string
+        algorithm:
+          type: string
+        key:
+          type: ["string", "null"]
+        processingTime:
+          type: number
+      required:
+        - encrypted
+        - algorithm
+        - processingTime
+    DecryptRequest:
+      type: object
+      properties:
+        text:
+          type: string
+        algorithm:
+          type: string
+          enum: [AES, Caesar, Base64, ROT13, Vigenere, XOR]
+        key:
+          type: string
+        shift:
+          type: ["integer", "null"]
+      required:
+        - text
+        - algorithm
+    DecryptResponse:
+      type: object
+      properties:
+        decrypted:
+          type: string
+        algorithm:
+          type: string
+        processingTime:
+          type: number
+      required:
+        - decrypted
+        - algorithm
+        - processingTime
+    GenerateKeyRequest:
+      type: object
+      properties:
+        algorithm:
+          type: string
+          enum: [AES, Caesar, Base64, ROT13, Vigenere, XOR]
+      required:
+        - algorithm
+    GenerateKeyResponse:
+      type: object
+      properties:
+        key:
+          type: string
+        algorithm:
+          type: string
+        description:
+          type: string
+      required:
+        - key
+        - algorithm
+        - description
+    EncryptionHistoryEntry:
+      type: object
+      properties:
+        id:
+          type: integer
+        operation:
+          type: string
+        algorithm:
+          type: string
+        inputLength:
+          type: integer
+        outputLength:
+          type: integer
+        processingTime:
+          type: number
+        createdAt:
+          type: string
+          format: date-time
+      required:
+        - id
+        - operation
+        - algorithm
+        - inputLength
+        - outputLength
+        - processingTime
+        - createdAt
+    EncryptionStats:
+      type: object
+      properties:
+        totalOperations:
+          type: integer
+        encryptCount:
+          type: integer
+        decryptCount:
+          type: integer
+        mostUsedAlgorithm:
+          type: string
+        averageProcessingTime:
+          type: number
+      required:
+        - totalOperations
+        - encryptCount
+        - decryptCount
+        - mostUsedAlgorithm
+        - averageProcessingTime
