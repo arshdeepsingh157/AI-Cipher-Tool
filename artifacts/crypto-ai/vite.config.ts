@@ -7,8 +7,9 @@ import path from "path";
 const stripUseClientDirective = {
   name: "strip-use-client",
   transform(code: string, id: string) {
-    if (/\.(tsx?|jsx?)$/.test(id) && code.startsWith('"use client"')) {
-      return { code: code.slice('"use client"'.length), map: null };
+    if (/\.(tsx?|jsx?)$/.test(id) && /^['"]use client['"]/.test(code)) {
+      // Replace with a comment to preserve line numbers and avoid sourcemap issues
+      return { code: code.replace(/^['"]use client['"]/, "// use client"), map: null };
     }
   },
 };
