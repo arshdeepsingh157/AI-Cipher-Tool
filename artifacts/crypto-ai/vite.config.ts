@@ -3,6 +3,16 @@ import react from "@vitejs/plugin-react";
 import tailwindcss from "@tailwindcss/vite";
 import path from "path";
 
+// Strip "use client" directives — valid in Next.js but unsupported in Vite
+const stripUseClientDirective = {
+  name: "strip-use-client",
+  transform(code: string, id: string) {
+    if (/\.(tsx?|jsx?)$/.test(id) && code.startsWith('"use client"')) {
+      return { code: code.slice('"use client"'.length), map: null };
+    }
+  },
+};
+
 const rawPort = process.env.PORT ?? "5173";
 
 const port = Number(rawPort);
@@ -16,6 +26,7 @@ const basePath = process.env.BASE_PATH ?? "/";
 export default defineConfig({
   base: basePath,
   plugins: [
+    stripUseClientDirective,
     react(),
     tailwindcss(),
   ],
