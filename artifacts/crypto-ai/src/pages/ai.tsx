@@ -39,11 +39,11 @@ export function AIChat() {
   const deleteConvo = useDeleteOpenaiConversation();
 
   const { data: currentConvo } = useGetOpenaiConversation(conversationId!, {
-    query: { enabled: !!conversationId },
+    query: { enabled: !!conversationId, queryKey: [] },
   });
 
   const { data: messages, isLoading: isLoadingMessages, refetch } = useListOpenaiMessages(conversationId!, {
-    query: { enabled: !!conversationId },
+    query: { enabled: !!conversationId, queryKey: [] },
   });
 
   useEffect(() => {
