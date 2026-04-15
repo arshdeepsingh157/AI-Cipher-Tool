@@ -1,14 +1,17 @@
 import { Link, useLocation } from "wouter";
-import { Terminal, Bot, History } from "lucide-react";
+import { Terminal, Bot, History, ShieldCheck, Hash, Eye } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 export function Layout({ children }: { children: React.ReactNode }) {
   const [location] = useLocation();
 
   const navItems = [
-    { href: "/", label: "Workspace", icon: Terminal },
-    { href: "/ai", label: "AI Assistant", icon: Bot },
-    { href: "/history", label: "History", icon: History },
+    { href: "/",        label: "Workspace",       icon: Terminal  },
+    { href: "/hash",    label: "Hash Generator",  icon: Hash      },
+    { href: "/password",label: "Password Tools",  icon: ShieldCheck },
+    { href: "/stego",   label: "Steganography",   icon: Eye       },
+    { href: "/ai",      label: "AI Assistant",    icon: Bot       },
+    { href: "/history", label: "History",         icon: History   },
   ];
 
   return (

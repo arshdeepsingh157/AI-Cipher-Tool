@@ -19,6 +19,9 @@ const SUGGESTED = [
   "Explain public key cryptography with a real-world analogy",
   "What is a one-time pad and why is it theoretically unbreakable?",
   "How do salted hashes protect passwords?",
+  "How does the XOR cipher work?",
+  "How does the Caesar cipher work and why is it weak?",
+  "What is Base64 and is it encryption?",
 ];
 
 export function AIChat() {
@@ -140,7 +143,7 @@ export function AIChat() {
             <h2 className="font-bold font-mono text-base text-primary leading-none">
               {currentConvo?.title || "CYPHER_AI"}
             </h2>
-            <p className="text-[11px] text-muted-foreground font-mono mt-0.5">Expert Cryptography Assistant · GPT-5.2</p>
+            <p className="text-[11px] text-muted-foreground font-mono mt-0.5">Expert Cryptography Assistant · Built-in</p>
           </div>
           <div className="ml-2 w-2 h-2 rounded-full bg-emerald-400 animate-pulse" title="Online" />
         </div>
@@ -271,7 +274,7 @@ export function AIChat() {
           </Button>
         </form>
         <p className="text-[10px] font-mono text-muted-foreground/40 mt-2 text-center">
-          Powered by GPT-5.2 via Replit AI · Responses are AI-generated
+          Cryptography knowledge base · Select a topic or ask a question
         </p>
       </div>
     </div>

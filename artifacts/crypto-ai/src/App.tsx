@@ -6,6 +6,9 @@ import { Layout } from "@/components/layout";
 import { Home } from "@/pages/home";
 import { AIChat } from "@/pages/ai";
 import { HistoryPage } from "@/pages/history";
+import { PasswordPage } from "@/pages/password";
+import { HashPage } from "@/pages/hash";
+import { StegoPage } from "@/pages/stego";
 import NotFound from "@/pages/not-found";
 
 const queryClient = new QueryClient();
@@ -17,6 +20,9 @@ function Router() {
         <Route path="/" component={Home} />
         <Route path="/ai" component={AIChat} />
         <Route path="/history" component={HistoryPage} />
+        <Route path="/password" component={PasswordPage} />
+        <Route path="/hash" component={HashPage} />
+        <Route path="/stego" component={StegoPage} />
         <Route component={NotFound} />
       </Switch>
     </Layout>
@@ -37,3 +43,4 @@ function App() {
 }
 
 export default App;
+
