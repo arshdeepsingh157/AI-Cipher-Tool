@@ -42,7 +42,7 @@ export function AIChat() {
     query: { enabled: !!conversationId, queryKey: [] },
   });
 
-  const { data: messages, isLoading: isLoadingMessages, refetch } = useListOpenaiMessages(conversationId!, {
+  const { data: messages = [], isLoading: isLoadingMessages, refetch } = useListOpenaiMessages(conversationId!, {
     query: { enabled: !!conversationId, queryKey: [] },
   });
 
@@ -199,7 +199,7 @@ export function AIChat() {
         )}
 
         {/* Messages */}
-        {messages?.map((msg) => (
+        {Array.isArray(messages) && messages.map((msg) => (
           <div key={msg.id} className={`flex gap-3 ${msg.role === "user" ? "flex-row-reverse" : ""}`}>
             <div
               className={`w-8 h-8 rounded-lg shrink-0 flex items-center justify-center text-xs font-mono font-bold ${
